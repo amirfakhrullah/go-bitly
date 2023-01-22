@@ -12,8 +12,12 @@ func SetupAndListen() {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 	router.Get("/links", GetAllLinks)
-	router.Get("/links/:id", GetLinkById)
 	router.Post("/links", CreateLink)
+	router.Get("/links/:id", GetLinkById)
+	router.Put("/links/:id", UpdateLink)
+	router.Delete("/links/:id", DeleteLink)
+
+	router.Get("/r/:shortenedId", Redirect)
 
 	router.Listen(":8000")
 }

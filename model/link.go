@@ -21,8 +21,13 @@ func CreateLink(l Link) error {
 	return tx.Error
 }
 
-func UpdateLink(l Link) error {
-	tx := db.Save(&l)
+func UpdateLink(updatedLink Link, id uint64) error {
+	var link Link
+	db.Where("id = ?", id).First(&link)
+	link.RedirectUrl = updatedLink.RedirectUrl
+	link.ShortenedId = updatedLink.ShortenedId
+	link.Clicked = updatedLink.Clicked
+	tx := db.Save(&link)
 	return tx.Error
 }
 
@@ -31,8 +36,8 @@ func DeleteLink(id uint64) error {
 	return tx.Error
 }
 
-func FindByUrl(url string) (Link, error) {
+func FindByShortenedId(id string) (Link, error) {
 	var l Link
-	tx := db.Where("shortenedUrl = ?", url).First(&l)
+	tx := db.Where("shortened_id = ?", id).First(&l)
 	return l, tx.Error
 }
