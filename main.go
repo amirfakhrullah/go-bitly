@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/amirfakhrullah/go-bitly/db"
 	"github.com/amirfakhrullah/go-bitly/routes"
 	"github.com/gofiber/fiber/v2"
@@ -10,13 +12,13 @@ import (
 func main() {
 	db.ConnectDB()
 
-	router := fiber.New()
-	router.Use(cors.New(cors.Config{
+	app := fiber.New()
+	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
-	routes.SetupLinkRoutes(router)
+	routes.SetupLinkRoutes(app)
 
-	router.Listen(":8000")
+	log.Fatal(app.Listen(":8000"))
 }
