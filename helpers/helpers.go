@@ -5,6 +5,7 @@ import (
 
 	"github.com/amirfakhrullah/go-bitly/db"
 	"github.com/amirfakhrullah/go-bitly/model"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -33,6 +34,14 @@ func HashPassword(password string) (string, error) {
 }
 
 func CheckPasswordHash(password, hash string) bool {
-    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-    return err == nil
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func ValidatePayload(s interface{}) error {
+	validate := validator.New()
+	if err := validate.Struct(s); err != nil {
+		return errors.New(err.Error())
+	}
+	return nil
 }

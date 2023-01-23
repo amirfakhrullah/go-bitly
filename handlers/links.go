@@ -10,9 +10,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type CreateLinkPayload struct {
-	RedirectUrl string `json:"redirect_url"`
-	ShortenedId string `json:"shortened_id"`
+type LinkPayload struct {
+	RedirectUrl string `json:"redirect_url" validate:"required,min=4,max=100"`
+	ShortenedId string `json:"shortened_id" validate:"max=20"`
 }
 
 func GetAllLinks(ctx *fiber.Ctx) error {
@@ -61,15 +61,16 @@ func CreateLink(ctx *fiber.Ctx) error {
 		})
 	}
 	ctx.Accepts("application/json")
-	var body CreateLinkPayload
+	var body LinkPayload
 	if err := ctx.BodyParser(&body); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error parsing body " + err.Error(),
 		})
 	}
-	if body.RedirectUrl == "" {
+
+	if err = helpers.ValidatePayload(body); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "redirect_url cannot be empty",
+			"message": err.Error(),
 		})
 	}
 	if body.ShortenedId == "" {
@@ -104,15 +105,16 @@ func UpdateLink(ctx *fiber.Ctx) error {
 			"message": "invalid id " + err.Error(),
 		})
 	}
-	var l CreateLinkPayload
+	var l LinkPayload
 	if err = ctx.BodyParser(&l); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error parsing body " + err.Error(),
 		})
 	}
-	if l.RedirectUrl == "" {
+
+	if err = helpers.ValidatePayload(l); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "redirect_url cannot be empty",
+			"message": err.Error(),
 		})
 	}
 	if l.ShortenedId == "" {
@@ -152,6 +154,11 @@ func DeleteLink(ctx *fiber.Ctx) error {
 
 func Redirect(ctx *fiber.Ctx) error {
 	shortenedId := ctx.Params("shortenedId")
+	if shortenedId == "" {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "invalid id",
+		})
+	}
 	link, err := services.OpenShortenedId(shortenedId)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

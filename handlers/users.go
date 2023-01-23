@@ -15,8 +15,8 @@ func Login(ctx *fiber.Ctx) error {
 	ctx.Accepts("application/json")
 
 	type LoginPayload struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email    string `json:"email" validate:"required,email,min=4,max=50"`
+		Password string `json:"password" validate:"required,min=4,max=20"`
 	}
 
 	var body LoginPayload
@@ -25,7 +25,7 @@ func Login(ctx *fiber.Ctx) error {
 			"message": "error parsing body " + err.Error(),
 		})
 	}
-	if body.Email == "" || body.Password == "" {
+	if err := helpers.ValidatePayload(body); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "invalid credentials",
 		})
@@ -64,9 +64,9 @@ func Signup(ctx *fiber.Ctx) error {
 	ctx.Accepts("application/json")
 
 	type SignupPayload struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Name     string `json:"name" validate:"required,min=4,max=50"`
+		Email    string `json:"email" validate:"required,email,min=4,max=50"`
+		Password string `json:"password" validate:"required,min=8,max=20"`
 	}
 
 	var body SignupPayload
@@ -75,7 +75,8 @@ func Signup(ctx *fiber.Ctx) error {
 			"message": "error parsing body " + err.Error(),
 		})
 	}
-	if body.Name == "" || body.Email == "" || body.Password == "" {
+
+	if err := helpers.ValidatePayload(body); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "invalid credentials",
 		})
