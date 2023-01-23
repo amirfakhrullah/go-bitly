@@ -7,6 +7,7 @@ import (
 )
 
 var DB_URL_STRING string
+var JWT_SECRET string
 
 func getEnvSafely(k string) string {
 	v := os.Getenv(k)
@@ -18,4 +19,5 @@ func getEnvSafely(k string) string {
 
 func init() {
 	DB_URL_STRING = getEnvSafely("DB_URL_STRING")
+	JWT_SECRET = getEnvSafely("JWT_SECRET")
 }

@@ -5,4 +5,5 @@ type Link struct {
 	RedirectUrl string `json:"redirect_url" gorm:"unique;not null"`
 	ShortenedId string `json:"shortened_id" gorm:"unique;not null"`
 	Clicked     uint64 `json:"clicked"`
+	UserID      uint   `json:"user_id" gorm:"not null"`
 }
