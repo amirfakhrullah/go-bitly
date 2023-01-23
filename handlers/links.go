@@ -67,6 +67,11 @@ func CreateLink(ctx *fiber.Ctx) error {
 			"message": "error parsing body " + err.Error(),
 		})
 	}
+	if body.RedirectUrl == "" {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "redirect_url cannot be empty",
+		})
+	}
 	if body.ShortenedId == "" {
 		body.ShortenedId = utils.RandomURL(8)
 	}
@@ -103,6 +108,11 @@ func UpdateLink(ctx *fiber.Ctx) error {
 	if err = ctx.BodyParser(&l); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error parsing body " + err.Error(),
+		})
+	}
+	if l.RedirectUrl == "" {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "redirect_url cannot be empty",
 		})
 	}
 	if l.ShortenedId == "" {

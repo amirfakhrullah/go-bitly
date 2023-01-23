@@ -113,6 +113,6 @@ func Signup(ctx *fiber.Ctx) error {
 }
 
 func Logout(ctx *fiber.Ctx) error {
-	ctx.ClearCookie("Authorization")
+	ctx.Append("Authorization", "")
 	return ctx.SendStatus(fiber.StatusOK)
 }
