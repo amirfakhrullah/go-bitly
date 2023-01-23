@@ -116,3 +116,19 @@ func Logout(ctx *fiber.Ctx) error {
 	ctx.Append("Authorization", "")
 	return ctx.SendStatus(fiber.StatusOK)
 }
+
+func GetUserInfo(ctx *fiber.Ctx) error {
+	userId, err := helpers.GetUserId(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	user, err := services.GetUserInfo(userId)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(user)
+}

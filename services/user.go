@@ -18,6 +18,17 @@ func FindUserByEmail(email string) (model.User, error) {
 	return user, nil
 }
 
+func GetUserInfo(id uint) (model.User, error) {
+	var user model.User
+	if err := db.DB.Preload("Links").Find(&user, "id = ?", id).Error; err != nil {
+		return model.User{}, err
+	}
+	if user.ID == 0 {
+		return model.User{}, errors.New("user not found")
+	}
+	return user, nil
+}
+
 func IsUserExists(email string) (bool, error) {
 	var user model.User
 	if err := db.DB.Find(&user, "email = ?", email).Error; err != nil {
