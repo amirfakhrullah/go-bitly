@@ -18,6 +18,8 @@ func main() {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
+	routes.SetupRedirectRoutes(app)
+	routes.SetupUserRoutes(app)
 	routes.SetupLinkRoutes(app)
 
 	log.Fatal(app.Listen(":8000"))

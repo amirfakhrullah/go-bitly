@@ -53,6 +53,9 @@ func OpenShortenedId(id string) (model.Link, error) {
 	if err := db.DB.Find(&l, "shortened_id = ?", id).Error; err != nil {
 		return model.Link{}, err
 	}
+	if l.ID == 0 {
+		return model.Link{}, errors.New("invalid link")
+	}
 	l.Clicked += 1
 	tx := db.DB.Save(&l)
 	return l, tx.Error

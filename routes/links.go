@@ -7,13 +7,11 @@ import (
 )
 
 func SetupLinkRoutes(app *fiber.App) {
-	r := app.Group("/links", middlewares.AuthMiddleware)
+	r := app.Group("/links", middlewares.JwtMiddleware)
 
 	r.Get("/", handlers.GetAllLinks)
 	r.Post("/", handlers.CreateLink)
 	r.Get("/:id", handlers.GetLinkById)
 	r.Put("/:id", handlers.UpdateLink)
 	r.Delete("/:id", handlers.DeleteLink)
-
-	r.Get("/r/:shortenedId", handlers.Redirect)
 }

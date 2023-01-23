@@ -16,7 +16,12 @@ type CreateLinkPayload struct {
 }
 
 func GetAllLinks(ctx *fiber.Ctx) error {
-	userId := helpers.GetUserId(ctx)
+	userId, err := helpers.GetUserId(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
 	links, err := services.GetAllLinks(userId)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -27,7 +32,12 @@ func GetAllLinks(ctx *fiber.Ctx) error {
 }
 
 func GetLinkById(ctx *fiber.Ctx) error {
-	userId := helpers.GetUserId(ctx)
+	userId, err := helpers.GetUserId(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 64)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -44,7 +54,12 @@ func GetLinkById(ctx *fiber.Ctx) error {
 }
 
 func CreateLink(ctx *fiber.Ctx) error {
-	userId := helpers.GetUserId(ctx)
+	userId, err := helpers.GetUserId(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
 	ctx.Accepts("application/json")
 	var body CreateLinkPayload
 	if err := ctx.BodyParser(&body); err != nil {
@@ -55,7 +70,7 @@ func CreateLink(ctx *fiber.Ctx) error {
 	if body.ShortenedId == "" {
 		body.ShortenedId = utils.RandomURL(8)
 	}
-	err := services.CreateLink(model.Link{
+	err = services.CreateLink(model.Link{
 		RedirectUrl: body.RedirectUrl,
 		ShortenedId: body.ShortenedId,
 		UserID:      userId,
@@ -71,7 +86,12 @@ func CreateLink(ctx *fiber.Ctx) error {
 }
 
 func UpdateLink(ctx *fiber.Ctx) error {
-	userId := helpers.GetUserId(ctx)
+	userId, err := helpers.GetUserId(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
 	ctx.Accepts("application/json")
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 64)
 	if err != nil {
@@ -85,6 +105,9 @@ func UpdateLink(ctx *fiber.Ctx) error {
 			"message": "error parsing body " + err.Error(),
 		})
 	}
+	if l.ShortenedId == "" {
+		l.ShortenedId = utils.RandomURL(8)
+	}
 	if err = services.UpdateLink(userId, model.Link{
 		RedirectUrl: l.RedirectUrl,
 		ShortenedId: l.ShortenedId,
@@ -97,7 +120,12 @@ func UpdateLink(ctx *fiber.Ctx) error {
 }
 
 func DeleteLink(ctx *fiber.Ctx) error {
-	userId := helpers.GetUserId(ctx)
+	userId, err := helpers.GetUserId(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 64)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

@@ -26,5 +26,5 @@ func ConnectDB() {
 	DB.Logger = logger.Default.LogMode(logger.Info)
 
 	log.Println("Running migrations")
-	DB.AutoMigrate(&model.Link{})
+	DB.AutoMigrate(&model.Link{}, &model.User{})
 }
