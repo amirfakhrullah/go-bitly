@@ -27,7 +27,7 @@ func Login(ctx *fiber.Ctx) error {
 	}
 	if err := helpers.ValidatePayload(body); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "invalid credentials",
+			"message": err.Error(),
 		})
 	}
 
@@ -78,7 +78,7 @@ func Signup(ctx *fiber.Ctx) error {
 
 	if err := helpers.ValidatePayload(body); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "invalid credentials",
+			"message": err.Error(),
 		})
 	}
 
